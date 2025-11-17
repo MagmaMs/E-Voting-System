@@ -3,6 +3,9 @@
 
 int voter();
 int admin();
+
+char voterPass[50];
+int voterID;
 int main()
 {
     int fmain;
@@ -29,6 +32,17 @@ int main()
         goto intro;
     }
 }
-int voter(){}
+int voter()
+{
+    printf("========================\n"
+           "  Welcome to your booth \n"
+           "========================\n");
+
+    printf("Verify your identity: \n"
+           "Enter your Voter ID: ");
+    scanf("%d", &voterID);
+    printf("Enter your password: ");
+    scanf("%s", &voterPass);
+}
 int admin(){}
 //Add login system to both using Voter ID and admin ID
