@@ -3,9 +3,11 @@
 #include<stdlib.h>
 int voter();
 int admin();
+int adminMenu();
 int login();
 void updated();
 int registerVoter();
+int candidatefunc();
 
 int id;
 char pass[50];
@@ -19,9 +21,10 @@ struct voter{
 
 struct candidate{
     int candID;
-    char cadName[50];
+    char candName[50];
     char candParty[50];
-
+    char candGender[10];
+    int candAge;
 };
 
 struct voter voters[100];
@@ -46,16 +49,16 @@ int main()
         strcpy(voters[i].name, token);
         voters[i].name[strcspn(voters[i].name, "\n")] = 0; //removes \n
         token = strtok(NULL, ","); // 4th token: vote
-        if (token != NULL){ 
+        if (token != NULL){
             voters[i].vote = atoi(token); // converts string into int and also updates and stores
         } else {
             // Handle case where vote is missing, perhaps set to a default value
-            voters[i].vote = 0; 
+            voters[i].vote = 0;
         }
         i++;
         voterCount++;
     }
-    registerVoter();
+
     int fmain;
     printf("========================\n"
            "         VOTE-IT       \n\n"
@@ -122,9 +125,7 @@ int admin()
     int adminID;
     int adminActualID = 123;
     char passActualAdmin[50] = "admin123";
-    printf("=========================\n"
-           "  Welcome to Admin Panel \n"
-           "=========================\n");
+
     loginAdmin:
     printf("Enter your Admin ID: ");
     scanf("%d", &adminID);
@@ -140,6 +141,7 @@ int admin()
         if(strcmp(passAdmin, passActualAdmin)==0)
         {
         printf("Successfully logged in as Admin\n");
+        adminMenu();
         }
         else
         {
@@ -149,9 +151,43 @@ int admin()
     }
     return 0;
 }
+int adminMenu()
+{
+    int adMenu;
+    printf("=========================\n"
+           "  Welcome to Admin Panel \n"
+           "=========================\n");
+    printf("1. Add/Register Candidate\n"
+           "2. Add/Register New Voter\n"
+           "3. Register a Classroom\n"
+           "4. Logout\n");
+    printf("Select one of the options (1-4): ");
+    scanf("%d", &adMenu);
 
+    if(adMenu==2)
+    {
+        registerVoter();
+    }
+    else if(adMenu==1)
+    {
+
+    }
+    else if(adMenu==3)
+    {
+
+    }
+    else if(adMenu==4)
+    {
+        main();
+    }
+    else
+    {
+        printf("Invalid Input, try again");
+        adminMenu();
+    }
+}
 void update() {
-    FILE *fp = fopen("voter.csv", "w"); 
+    FILE *fp = fopen("voter.csv", "w");
     if (fp == NULL) {
         printf("Error updating file!\n");
         return;
@@ -168,21 +204,19 @@ int registerVoter(){
     printf("==========================================\n"
            "    Welcome to NEW voter Registration! \n"
            "==========================================\n");
-           printf("Enter the number of new voters that you want to register:-");
+           printf("Enter the number of new voters that you want to register:- ");
            scanf("%d", &new_num);
            voterCount += new_num;
-           int a = voterCount - new_num;
-           for(int i = 0; i < new_num; i++){
-            printf("Enter the details of the voter no. %d\n", i);
-            printf("Enter voter's ID:- ");
-            scanf("%d", &voters[a].voterID);
-            printf("Enter voter's password:- ");
-            scanf("%s", voters[a].voterPass);
-            printf("Enter voter's name:- ");
-            scanf("%s", voters[a].name);
-            voters[a].vote = 0;
-            a++;
-           }
-    update();
+
     return 0;
+
+}
+int candidatefunc()
+{
+    int new_cand;
+    printf("================================\n"
+           "       Add New Candidates!      \n"
+           "================================\n");
+    printf("Enter the number of new candidates you want to register:- ");
+    scanf("%d", &new_cand);
 }
