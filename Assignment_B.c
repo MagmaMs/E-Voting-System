@@ -4,6 +4,8 @@
 int voter();
 int admin();
 int login();
+void updated();
+int registerVoter();
 
 int id;
 char pass[50];
@@ -22,8 +24,10 @@ struct candidate{
 
 };
 
-    struct voter voters[100];
-    char line[200];
+struct voter voters[100];
+char line[200];
+int voterCount = 0;
+
 int main()
 {
     FILE *fp = fopen("voter.csv", "r");
@@ -42,13 +46,14 @@ int main()
         strcpy(voters[i].name, token);
         voters[i].name[strcspn(voters[i].name, "\n")] = 0; //removes \n
         token = strtok(NULL, ","); // 4th token: vote
-        if (token != NULL){
+        if (token != NULL){ 
             voters[i].vote = atoi(token); // converts string into int and also updates and stores
         } else {
             // Handle case where vote is missing, perhaps set to a default value
-            voters[i].vote = 0;
+            voters[i].vote = 0; 
         }
         i++;
+        voterCount++;
     }
 
     int fmain;
@@ -102,7 +107,7 @@ int voter()
     }
     if(strcmp(pass, voters[j].voterPass) == 0){
         printf("Login Successful!\n"
-               "Welcome %s.\n", voters[j].name);
+               "Welcome %s!!\n", voters[j].name);
     }
     else{
         printf("Incorrect Password.\n");
@@ -145,5 +150,27 @@ int admin()
     return 0;
 }
 
+void update() {
+    FILE *fp = fopen("voter.csv", "w"); 
+    if (fp == NULL) {
+        printf("Error updating file!\n");
+        return;
+    }
+    for (int i = 0; i < voterCount; i++) {
+        fprintf(fp, "%d,%s,%s,%d\n", voters[i].voterID, voters[i].voterPass, voters[i].name, voters[i].vote);
+    }
+    fclose(fp);
+    printf("Voter FILE updated successfully.\n");
+}
 
-//Add login system to both using Voter ID and admin ID
+int registerVoter(){
+    int new_num;
+    printf("==========================================\n"
+           "    Welcome to NEW voter Registration! \n"
+           "==========================================\n");
+           printf("Enter the number of new voters that you want to register:-");
+           scanf("%d", new_num);
+           voterCount += new_num;
+
+    return 0;
+}
