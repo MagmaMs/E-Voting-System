@@ -1,15 +1,20 @@
 #include<stdio.h>
 #include<string.h>
-
+#include<stdlib.h>
 int voter();
 int admin();
 int login();
 
+int id;
+char pass[50];
 struct voter{
     int voterID;
     char voterPass[50];
     int vote;
 };
+
+    struct voter voters[100];
+    char line[200];
 int main()
 {
     FILE *fp = fopen("voter.csv", "r");
@@ -17,11 +22,8 @@ int main()
         printf("Unable to open a FILE!!\n");
     }
 
-    struct voter voters[100];
-    char line[200];
     int i = 0;
 
-    FILE *fp = fopen("voter.csv", "r");
     while((fgets(line, sizeof(line), fp)) != NULL){
         char *token = strtok(line, ",");
         voters[i].voterID = atoi(token);
@@ -41,7 +43,7 @@ int main()
     printf("Are you a: \n"
            "1. Voter\n"
            "2. Admin\n");
-    scanf("%d", fmain);
+    scanf("%d", &fmain);
     if(fmain == 1)
     {
         voter();
@@ -55,18 +57,41 @@ int main()
         printf("Invalid input, try again.");
         goto intro;
     }
+    fclose(fp);
+    return 0;
 }
 int voter()
-{
+{   int j = 0;
+    int found;
     printf("========================\n"
            "  Welcome to your booth \n"
            "========================\n");
 
     printf("Verify your identity: \n"
            "Enter your Voter ID: ");
-    scanf("%d", &voterID);
+    scanf("%d", &id);
     printf("Enter your password: ");
-    scanf("%s", &voterPass);
+    scanf("%s", pass);
+    for(j = 0; j < 100; j++){
+        if(id == voters[j].voterID){
+            found = 1;
+            break;
+        }
+    }
+    if(!found){
+        printf("No such Voter ID.\n");
+        return 0;
+    }
+    if(strcmp(pass, voters[j].voterPass) == 0){
+        printf("Login Successful!\n");
+    }
+    else{
+        printf("Incorrect Password.\n");
+    }
+    if(strcmp(pass, voters[j].voterPass) == 0){
+        printf("Successfull!!");
+    }
+    
 }
 int admin(){}
 
