@@ -3,11 +3,35 @@
 
 int voter();
 int admin();
+int login();
 
-char voterPass[50];
-int voterID;
+struct voter{
+    int voterID;
+    char voterPass[50];
+    int vote;
+};
 int main()
 {
+    FILE *fp = fopen("voter.csv", "r");
+    if(!fp){
+        printf("Unable to open a FILE!!\n");
+    }
+
+    struct voter voters[100];
+    char line[200];
+    int i = 0;
+
+    FILE *fp = fopen("voter.csv", "r");
+    while((fgets(line, sizeof(line), fp)) != NULL){
+        char *token = strtok(line, ",");
+        voters[i].voterID = atoi(token);
+        token = strtok(NULL, ",");
+        strcpy(voters[i].voterPass, token);
+        token = strtok(NULL, ",");
+        voters[i].vote = atoi(token);
+        i++;
+    }
+
     int fmain;
     printf("========================\n"
            "         VOTE-IT       \n\n"
@@ -45,4 +69,5 @@ int voter()
     scanf("%s", &voterPass);
 }
 int admin(){}
+
 //Add login system to both using Voter ID and admin ID
