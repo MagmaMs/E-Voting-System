@@ -7,6 +7,7 @@ int login();
 
 int id;
 char pass[50];
+char passAdmin[50];
 struct voter{
     int voterID;
     char voterPass[50];
@@ -41,11 +42,11 @@ int main()
         strcpy(voters[i].name, token);
         voters[i].name[strcspn(voters[i].name, "\n")] = 0; //removes \n
         token = strtok(NULL, ","); // 4th token: vote
-        if (token != NULL){ 
+        if (token != NULL){
             voters[i].vote = atoi(token); // converts string into int and also updates and stores
         } else {
             // Handle case where vote is missing, perhaps set to a default value
-            voters[i].vote = 0; 
+            voters[i].vote = 0;
         }
         i++;
     }
@@ -59,6 +60,7 @@ int main()
     printf("Are you a: \n"
            "1. Voter\n"
            "2. Admin\n");
+    printf("Select an option: ");
     scanf("%d", &fmain);
     if(fmain == 1)
     {
@@ -100,7 +102,7 @@ int voter()
     }
     if(strcmp(pass, voters[j].voterPass) == 0){
         printf("Login Successful!\n"
-               "Welcome %s!!\n", voters[j].name);
+               "Welcome %s.\n", voters[j].name);
     }
     else{
         printf("Incorrect Password.\n");
@@ -110,6 +112,38 @@ int voter()
     return 0;
 }
 }
-int admin(){}
+int admin()
+{
+    int adminID;
+    int adminActualID = 123;
+    char passActualAdmin[50] = "admin123";
+    printf("=========================\n"
+           "  Welcome to Admin Panel \n"
+           "=========================\n");
+    loginAdmin:
+    printf("Enter your Admin ID: ");
+    scanf("%d", &adminID);
+    printf("Enter your password: ");
+    scanf("%s", &passAdmin);
+    if(adminID != 123)
+    {
+        printf("No such Admin ID\n");
+        goto loginAdmin;
+    }
+    else
+    {
+        if(strcmp(passAdmin, passActualAdmin)==0)
+        {
+        printf("Successfully logged in as Admin\n");
+        }
+        else
+        {
+            printf("Incorrect password");
+            goto loginAdmin;
+        }
+    }
+    return 0;
+}
+
 
 //Add login system to both using Voter ID and admin ID
