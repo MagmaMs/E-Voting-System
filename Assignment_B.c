@@ -10,6 +10,7 @@ char pass[50];
 struct voter{
     int voterID;
     char voterPass[50];
+    char name[50];
     int vote;
 };
 
@@ -25,12 +26,20 @@ int main()
     int i = 0;
 
     while((fgets(line, sizeof(line), fp)) != NULL){
-        char *token = strtok(line, ",");
+        char *token = strtok(line, ","); // makes segments
         voters[i].voterID = atoi(token);
         token = strtok(NULL, ",");
         strcpy(voters[i].voterPass, token);
         token = strtok(NULL, ",");
-        voters[i].vote = atoi(token);
+        strcpy(voters[i].name, token);
+        voters[i].name[strcspn(voters[i].name, "\n")] = 0; //removes \n
+        token = strtok(NULL, ","); // 4th token: vote
+        if (token != NULL){ 
+            voters[i].vote = atoi(token); // converts string into int and also updates and stores
+        } else {
+            // Handle case where vote is missing, perhaps set to a default value
+            voters[i].vote = 0; 
+        }
         i++;
     }
 
@@ -62,7 +71,7 @@ int main()
 }
 int voter()
 {   int j = 0;
-    int found;
+    int found = 0;
     printf("========================\n"
            "  Welcome to your booth \n"
            "========================\n");
@@ -83,15 +92,12 @@ int voter()
         return 0;
     }
     if(strcmp(pass, voters[j].voterPass) == 0){
-        printf("Login Successful!\n");
+        printf("Login Successful!\n"
+               "Welcome %s!!\n", voters[j].name);
     }
     else{
         printf("Incorrect Password.\n");
     }
-    if(strcmp(pass, voters[j].voterPass) == 0){
-        printf("Successfull!!");
-    }
-    
 }
 int admin(){}
 
