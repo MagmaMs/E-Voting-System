@@ -14,6 +14,13 @@ struct voter{
     int vote;
 };
 
+struct candidate{
+    int candID;
+    char cadName[50];
+    char candParty[50];
+
+};
+
     struct voter voters[100];
     char line[200];
 int main()
@@ -98,6 +105,10 @@ int voter()
     else{
         printf("Incorrect Password.\n");
     }
+    if(voters[j].vote != 0) {
+    printf("You have already voted! Access denied.\n");
+    return 0;
+}
 }
 int admin(){}
 
