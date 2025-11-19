@@ -55,7 +55,7 @@ int main()
         i++;
         voterCount++;
     }
-
+    registerVoter();
     int fmain;
     printf("========================\n"
            "         VOTE-IT       \n\n"
@@ -169,8 +169,20 @@ int registerVoter(){
            "    Welcome to NEW voter Registration! \n"
            "==========================================\n");
            printf("Enter the number of new voters that you want to register:-");
-           scanf("%d", new_num);
+           scanf("%d", &new_num);
            voterCount += new_num;
-
+           int a = voterCount - new_num;
+           for(int i = 0; i < new_num; i++){
+            printf("Enter the details of the voter no. %d\n", i);
+            printf("Enter voter's ID:- ");
+            scanf("%d", &voters[a].voterID);
+            printf("Enter voter's password:- ");
+            scanf("%s", voters[a].voterPass);
+            printf("Enter voter's name:- ");
+            scanf("%s", voters[a].name);
+            voters[a].vote = 0;
+            a++;
+           }
+    update();
     return 0;
 }
