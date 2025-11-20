@@ -15,7 +15,12 @@ int showResults();
 int showPercentVotes();
 int showBarGraph();
 int sortByVotes();
+int quickVoteStats();
 int id;
+
+int classVotes[100];
+int classTotalVotes = 0;
+
 char pass[50];
 char passAdmin[50];
 struct voter{
@@ -228,6 +233,7 @@ int admin()
         if(strcmp(passAdmin, passActualAdmin)==0)
         {
         printf("Successfully logged in as Admin\n");
+        adminMenu();
         }
         else
         {
@@ -390,7 +396,8 @@ int candDisplay()
 int quickVote()
 {
     int choice;
-    int classVotes[100] = {0};  
+    for(int i = 0; i < 100; i++){
+        classVotes[i] = 0; }
 
     printf("\n====================================\n");
     printf("         QUICK CLASSROOM VOTING\n");
@@ -421,7 +428,8 @@ int quickVote()
         int found = 0;
         for (int i = 0; i < candCount; i++) {
             if (cand[i].candID == choice) {
-                classVotes[i]++;
+                classVotes[i]++;       
+                classTotalVotes++;      
                 found = 1;
                 break;
             }
@@ -450,6 +458,7 @@ int quickVote()
     fclose(fclass);
 
     printf("\nClassroom voting results saved to classVote.csv!\n");
+    quickVoteStats();
     return 0;
 }
 int showResults()
@@ -491,12 +500,11 @@ int sortByVotes()
 {
     struct candidate temp[100];
 
-    // copy original data
+
     for (int i = 0; i < candCount; i++) {
         temp[i] = cand[i];
     }
 
-    // bubble sort (simple for your paradigm)
     for (int i = 0; i < candCount - 1; i++) {
         for (int j = 0; j < candCount - i - 1; j++) {
 
@@ -524,20 +532,27 @@ int sortByVotes()
 }
 int showBarGraph()
 {
-    printf("\n=================================\n");
-    printf("        ASCII BAR GRAPH\n");
-    printf("=================================\n");
-
-    for (int i = 0; i < candCount; i++) {
-        printf("%s (%d votes): ", cand[i].candName, cand[i].votes);
-
-        for (int j = 0; j < cand[i].votes; j++) {
-            printf("|");   // 1 bar per vote
-        }
-
-        printf("\n");
+    if(candCount == 0){
+        printf("No candidates available.\n");
+        return 0;
     }
+    printf("\n=================================\n");
+    printf("         OFFICIAL VOTE GRAPH\n");
+    printf("=================================\n\n");
 
+    int maxVotes = 1;
+    for(int i = 0; i < candCount; i++) {
+        if(cand[i].votes > maxVotes)
+            maxVotes = cand[i].votes;
+    }
+    int maxBarWidth = 50; 
+    for(int i = 0; i < candCount; i++) {
+        int barLen = (cand[i].votes * maxBarWidth) / maxVotes;
+        printf("%-20s | ", cand[i].candName);
+        for(int j = 0; j < barLen; j++)
+            printf("█");
+        printf(" (%d)\n", cand[i].votes);
+    }
     return 0;
 }
 int showPercentVotes()
@@ -548,7 +563,6 @@ int showPercentVotes()
 
     int totalVotes = 0;
 
-    // count total votes
     for (int i = 0; i < candCount; i++) {
         totalVotes += cand[i].votes;
     }
@@ -558,7 +572,6 @@ int showPercentVotes()
         return 0;
     }
 
-    // show individual percentage
     for (int i = 0; i < candCount; i++) {
         float percent = (cand[i].votes * 100.0) / totalVotes;
 
@@ -566,6 +579,94 @@ int showPercentVotes()
         printf("Votes: %d (%.2f%%)\n", cand[i].votes, percent);
         printf("---------------------------------\n");
     }
+
+    return 0;
+}
+int quickVoteStats()
+{
+    printf("\n=================================\n");
+    printf("      QUICK VOTE STATISTICS\n");
+    printf("=================================\n");
+
+    if(classTotalVotes == 0) {
+        printf("No quick votes have been cast yet.\n");
+        return 0;
+    }
+
+    printf("\n------------ SORTED ORDER -----------\n");
+
+    struct candidate temp[100];
+    int tempVotes[100];
+
+    for(int i = 0; i < candCount; i++) {
+        temp[i] = cand[i];
+        tempVotes[i] = classVotes[i];
+    }
+
+    for(int i = 0; i < candCount - 1; i++) {
+        for(int j = 0; j < candCount - i - 1; j++) {
+            if(tempVotes[j] < tempVotes[j+1]) {
+                int v = tempVotes[j];
+                tempVotes[j] = tempVotes[j+1];
+                tempVotes[j+1] = v;
+
+                struct candidate c = temp[j];
+                temp[j] = temp[j+1];
+                temp[j+1] = c;
+            }
+        }
+    }
+
+    for(int i = 0; i < candCount; i++) {
+        printf("Rank %d → %s (%s) : %d votes\n",
+               i+1,
+               temp[i].candName,
+               temp[i].candParty,
+               tempVotes[i]);
+    }
+
+    printf("\n------------ PERCENTAGES -----------\n");
+
+    for(int i = 0; i < candCount; i++) {
+        float percent = (classVotes[i] * 100.0) / classTotalVotes;
+
+        printf("%s (%s): %.2f%%\n",
+               cand[i].candName,
+               cand[i].candParty,
+               percent);
+    }
+
+    
+
+    printf("\n----------- ASCII GRAPH ------------\n");
+    int maxVotes = 1;
+    for(int i = 0; i < candCount; i++) {
+        if(classVotes[i] > maxVotes)
+            maxVotes = classVotes[i];
+    }
+    int maxBarWidth = 50;
+    for(int i = 0; i < candCount; i++) {
+        int barLen = (classVotes[i] * maxBarWidth) / maxVotes;
+        printf("%-20s | ", cand[i].candName);
+        for(int j = 0; j < barLen; j++)
+            printf("█");
+        printf(" (%d)\n", classVotes[i]);
+    }
+
+    printf("\n-------------- WINNER --------------\n");
+
+    int winnerIndex = 0;
+    for(int i = 1; i < candCount; i++) {
+        if(classVotes[i] > classVotes[winnerIndex]) {
+            winnerIndex = i;
+        }
+    }
+
+    printf("Winner: %s (%s)\n",
+           cand[winnerIndex].candName,
+           cand[winnerIndex].candParty);
+
+    printf("====================================\n");
 
     return 0;
 }
